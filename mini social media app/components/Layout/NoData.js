@@ -1,4 +1,4 @@
-import { Segment, Button } from "semantic-ui-react";
+import { Segment, Button, Message } from "semantic-ui-react";
 
 export const NoProfilePosts = () => (
   <>
@@ -40,4 +40,12 @@ export const NoPosts = () => (
 
 export const NoProfile = () => (
   <Segment size="mini" content="No Profile Found." />
+);
+
+export const NoNotifications = () => (
+  <Message content="No Notifications" icon="smile" info />
+);
+
+export const NoPostFound = () => (
+  <Message info icon="meh" header="Hey!" content="No Post Found." />
 );
