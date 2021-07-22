@@ -4,8 +4,13 @@ import catchErrors from "./catchErrors";
 import cookie from "js-cookie";
 
 const Axios = axios.create({
-  baseURL: `${baseUrl}/api/posts`,
-  headers: { Authorization: cookie.get("token") },
+  baseURL: `${baseUrl}/api/posts`
+});
+
+Axios.interceptors.request.use(config => {
+  const token = cookie.get("token");
+  config.headers.Authorization = token;
+  return config;
 });
 
 export const submitNewPost = async (
@@ -19,7 +24,7 @@ export const submitNewPost = async (
   try {
     const res = await Axios.post("/", { text, location, picUrl });
 
-    setPosts((prev) => [res.data, ...prev]);
+    setPosts(prev => [res.data, ...prev]);
     setNewPost({ text: "", location: "" });
   } catch (error) {
     const errorMsg = catchErrors(error);
@@ -30,7 +35,7 @@ export const submitNewPost = async (
 export const deletePost = async (postId, setPosts, setShowToastr) => {
   try {
     await Axios.delete(`/${postId}`);
-    setPosts((prev) => prev.filter((post) => post._id !== postId));
+    setPosts(prev => prev.filter(post => post._id !== postId));
     setShowToastr(true);
   } catch (error) {
     alert(catchErrors(error));
@@ -41,10 +46,10 @@ export const likePost = async (postId, userId, setLikes, like = true) => {
   try {
     if (like) {
       await Axios.post(`/like/${postId}`);
-      setLikes((prev) => [...prev, { user: userId }]);
+      setLikes(prev => [...prev, { user: userId }]);
     } else if (!like) {
       await Axios.put(`/unlike/${postId}`);
-      setLikes((prev) => prev.filter((like) => like.user !== userId));
+      setLikes(prev => prev.filter(like => like.user !== userId));
     }
   } catch (error) {
     alert(catchErrors(error));
@@ -59,10 +64,10 @@ export const postComment = async (postId, user, text, setComments, setText) => {
       _id: res.data,
       user,
       text,
-      date: Date.now(),
+      date: Date.now()
     };
 
-    setComments((prev) => [newComment, ...prev]);
+    setComments(prev => [newComment, ...prev]);
     setText("");
   } catch (error) {
     alert(catchErrors(error));
@@ -72,7 +77,7 @@ export const postComment = async (postId, user, text, setComments, setText) => {
 export const deleteComment = async (postId, commentId, setComments) => {
   try {
     await Axios.delete(`/${postId}/${commentId}`);
-    setComments((prev) => prev.filter((comment) => comment._id !== commentId));
+    setComments(prev => prev.filter(comment => comment._id !== commentId));
   } catch (error) {
     alert(catchErrors(error));
   }
